@@ -6,9 +6,11 @@
 
 #IncludeRegexTransform: 
 
-H:/vych/gauss/main.c
+Z:/codes/vych/gauss/main.c
 stdio.h
 -
 stdlib.h
+-
+stdint.h
 -
 

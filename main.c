@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 void triangle(int n, double (*a)[n], double *b) {
     for (int j = 0; j < n - 1; j++) {
@@ -13,13 +14,19 @@ void triangle(int n, double (*a)[n], double *b) {
     }
 }
 
+int zero_check(int n, double (*a)[n]) {
+
+}
+
 void wildHunt(FILE* in, FILE* out) {
     int n;
     fscanf(in, "%d", &n);
     double *upper = malloc((n - 1) * sizeof(double));
     double *middle = malloc(n * sizeof(double));
     double *lower = malloc((n - 1) * sizeof(double));
-    double *b = malloc(n * sizeof(double));
+    double *f = malloc(n * sizeof(double));
+    double *p = malloc(n * sizeof(double));
+    double *q = malloc(n * sizeof(double));
     double *x = malloc(n * sizeof(double));
     for (int i = 0; i < n - 1; i++) {
         fscanf(in, "%lf", &upper[i]);
@@ -31,9 +38,18 @@ void wildHunt(FILE* in, FILE* out) {
         fscanf(in, "%lf", &lower[i]);
     }
     for (int i = 0; i < n; i++) {
-        fscanf(in, "%lf", &b[i]);
+        fscanf(in, "%lf", &f[i]);
     }
-    
+
+    p[0] = upper[0] / middle[0];
+    q[0] = f[0] / middle[0];
+    for (int i = 1; i < n - 1; i++) {
+        double y = middle[i] - p[i - 1] * lower[i - 1];
+        p[i] = upper[i] / y;
+        q[i] = f[i] - q[i - 1] * lower[i - 1];
+    }
+
+
 }
 
 double triangleDet(int n, double (*a)[n]) {
@@ -53,6 +69,7 @@ int main() {
     if (check == 1) {
         wildHunt(in, out);
         fclose(in);
+        fclose(out);
         return 0;
     }
     int n;
@@ -60,7 +77,7 @@ int main() {
     double (*a)[n] = malloc(n * n * sizeof(double *));
     double *b = (double*) malloc(n * sizeof(double));
     double *x = (double*) malloc(n * sizeof(double));
-    double (*revA)[n] = malloc(n * n * sizeof(double *));
+    //double (*revA)[n] = malloc(n * n * sizeof(double *));
     if (a == NULL || b == NULL || x == NULL) {
         exit(-1);
     }
@@ -106,6 +123,6 @@ int main() {
     free(a);
     free(b);
     free(x);
-    free(revA);
+    //free(revA);
     return 0;
 }
