@@ -58,6 +58,13 @@ void wildHunt(FILE* in, FILE* out) {
     for (int i = 0; i < n; i++) {
         fprintf(stdout, "%.8lf ", x[i]);
     }
+    free(upper);
+    free(middle);
+    free(lower);
+    free(f);
+    free(p);
+    free(x);
+    free(q);
 }
 
 double triangleDet(int n, double (*a)[n]) {
@@ -168,9 +175,11 @@ int main() {
     fprintf(out, "\n");
 
     fclose(out);
+
     free(a);
+    free(clear_a);
     free(b);
     free(x);
-    //free(inverse);
+    free(inverse);
     return 0;
 }
