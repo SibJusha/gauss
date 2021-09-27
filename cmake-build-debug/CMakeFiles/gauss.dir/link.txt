@@ -1,0 +1,3 @@
+"C:\Program Files\JetBrains\CLion 2020.3.2\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\gauss.dir/objects.a
+Z:\mingw\mingw64\bin\ar.exe cr CMakeFiles\gauss.dir/objects.a @CMakeFiles\gauss.dir\objects1.rsp
+Z:\mingw\mingw64\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\gauss.dir/objects.a -Wl,--no-whole-archive  -o gauss.exe -Wl,--out-implib,libgauss.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\gauss.dir\linklibs.rsp

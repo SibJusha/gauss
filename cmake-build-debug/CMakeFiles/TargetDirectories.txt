@@ -1,0 +1,3 @@
+H:/vych/gauss/cmake-build-debug/CMakeFiles/gauss.dir
+H:/vych/gauss/cmake-build-debug/CMakeFiles/edit_cache.dir
+H:/vych/gauss/cmake-build-debug/CMakeFiles/rebuild_cache.dir
