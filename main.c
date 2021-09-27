@@ -14,9 +14,6 @@ void triangle(int n, double (*a)[n], double *b) {
     }
 }
 
-int zero_check(int n, double (*a)[n]) {
-
-}
 
 void wildHunt(FILE* in, FILE* out) {
     int n;
@@ -41,15 +38,26 @@ void wildHunt(FILE* in, FILE* out) {
         fscanf(in, "%lf", &f[i]);
     }
 
+
     p[0] = upper[0] / middle[0];
     q[0] = f[0] / middle[0];
     for (int i = 1; i < n - 1; i++) {
         double y = middle[i] - p[i - 1] * lower[i - 1];
         p[i] = upper[i] / y;
-        q[i] = f[i] - q[i - 1] * lower[i - 1];
+        q[i] = (f[i] - q[i - 1] * lower[i - 1]) / y;
+    }
+    q[n - 1] = (f[n - 1] - q[n - 2] * lower[n - 2]) /
+            (middle[n - 1] - p[n - 2] * lower[n - 2]);
+
+
+    x[n - 1] = q[n - 1];
+    for (int i = n - 2; i >= 0; i--) {
+        x[i] = q[i] - p[i] * x[i + 1];
     }
 
-
+    for (int i = 0; i < n; i++) {
+        fprintf(stdout, "%.8lf ", x[i]);
+    }
 }
 
 double triangleDet(int n, double (*a)[n]) {
@@ -60,10 +68,37 @@ double triangleDet(int n, double (*a)[n]) {
     return det;
 }
 
+void reverse(int n, double (*a)[n], const double *b, double * x) {
+    for (int i = n - 1; -1 < i; i--) {
+        double sum = 0;
+        for (int j = n - 1; i < j; j--) sum += x[j] * a[i][j];
+        x[i] = (b[i] - sum) / a[i][i];
+    }
+}
+
+void find_inverse(int n, double (*a)[n], double (*clear)[n], double * b, double (*inv)[n]) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (j == i) b[j] = 1;
+            else b[j] = 0;
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                a[i][j] = clear[i][j];
+            }
+        }
+
+        triangle(n, a, b);
+        reverse(n, a, b, inv[i]);
+    }
+}
+
 int main() {
     FILE *in;
     FILE *out;
-    in = fopen("H:/vych/gauss/input.txt", "r");
+    in = fopen("Z:/codes/vych/gauss/input.txt", "r");
+    out = fopen("Z:/codes/vych/gauss/output.txt", "w+");
     int check;
     fscanf(in, "%d", &check);
     if (check == 1) {
@@ -75,16 +110,18 @@ int main() {
     int n;
     fscanf(in, "%d", &n);
     double (*a)[n] = malloc(n * n * sizeof(double *));
+    double (*clear_a)[n] = malloc(n * n * sizeof (double *));
     double *b = (double*) malloc(n * sizeof(double));
     double *x = (double*) malloc(n * sizeof(double));
-    //double (*revA)[n] = malloc(n * n * sizeof(double *));
-    if (a == NULL || b == NULL || x == NULL) {
+    double (*inverse)[n] = malloc(n * n * sizeof(double *));
+    if (a == NULL || b == NULL || x == NULL || inverse == NULL) {
         exit(-1);
     }
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             fscanf(in, "%lf", &a[i][j]);
+            clear_a[i][j] = a[i][j];
         }
     }
 
@@ -96,7 +133,11 @@ int main() {
 
     triangle(n, a, b);
 
-    out = fopen("H:/vych/gauss/output.txt", "w+");
+    double det = triangleDet(n, a);
+
+    reverse(n, a, b, x);
+
+    // print
     fprintf(out, "Triangle form:\n");
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
@@ -106,23 +147,30 @@ int main() {
     }
     fprintf(out, "\n");
 
-    double det = triangleDet(n, a);
-    fprintf(out, "Determinant: %.8lf\n\n", det);
-
-    for (int i = n - 1; -1 < i; i--) {
-        double sum = 0;
-        for (int j = n - 1; i < j; j--) sum += x[j] * a[i][j];
-        x[i] = (b[i] - sum) / a[i][i];
-    }
-
     for (int i = 0; i < n; i++) {
         fprintf(out, "%.8lf ", x[i]);
     }
+    fprintf(out, "\n\nDeterminant: %.8lf\n\n", det);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            a[i][j] = clear_a[i][j];
+        }
+    }
+    find_inverse(n, a, clear_a, b, inverse);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            fprintf(out, "%.8lf ", inverse[j][i]);
+        }
+        fprintf(out, "\n");
+    }
+    fprintf(out, "\n");
 
     fclose(out);
     free(a);
     free(b);
     free(x);
-    //free(revA);
+    //free(inverse);
     return 0;
 }
